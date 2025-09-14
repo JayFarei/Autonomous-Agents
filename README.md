@@ -27,10 +27,135 @@ Copyright (C) Teemu Maatta.
 <div align="center">
 
   # Autonomous Agents
-  Autonomous Agents-research papers. Updated daily. [Resources-section](http://github.com/tmgthb/Autonomous-Agents/blob/main/resources/Autonomous_Agents_Resources.md)-section.  
+  Autonomous Agents-research papers. Updated daily. [Resources-section](http://github.com/tmgthb/Autonomous-Agents/blob/main/resources/Autonomous_Agents_Resources.md)-section.
 
 </div>
 
+
+---
+
+## 🚀 Parallel Paper Analysis Workflow
+
+This repository includes an automated workflow for analyzing research papers in parallel to build a dataset of multi-agent systems with their associated GitHub repositories.
+
+### Overview
+
+The workflow processes ~3,000 research papers from this repository to:
+1. Extract GitHub/GitLab URLs from papers
+2. Validate repository accessibility
+3. Assess multi-agent relevance
+4. Generate codebase summaries
+5. Build a comprehensive dataset
+
+### Setup
+
+1. **Prerequisites**
+   - Python 3.8+
+   - Claude Code installed
+   - GitHub CLI (`gh`) configured with authentication
+
+2. **Installation**
+   ```bash
+   # No additional dependencies required
+   # The workflow uses Claude Code's Task tool for parallelization
+   ```
+
+### Running the Analysis
+
+1. **Navigate to the repository**
+   ```bash
+   cd /path/to/Autonomous-Agents
+   ```
+
+2. **Run with Claude Code**
+   ```bash
+   # In Claude Code, execute:
+   python .claude/run_analysis.py
+   ```
+
+   The script will:
+   - Extract papers from all markdown files
+   - Process in batches of 10 papers
+   - Launch parallel agents for each paper
+   - Save results to `.claude/analysis/dataset.md`
+   - Track progress in `.claude/analysis/progress.json`
+
+### Workflow Architecture
+
+```
+┌─────────────────┐
+│  run_analysis.py│
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────────────┐
+│  Extract Papers from    │
+│  Markdown Files         │
+└────────┬────────────────┘
+         │
+         ▼
+┌─────────────────────────┐
+│  Process Batch (10)     │
+│  ┌──────────────────┐   │
+│  │ For each paper:  │   │
+│  │ - Research Agent │   │
+│  │ - Developer Agent│   │
+│  │ (Run in parallel)│   │
+│  └──────────────────┘   │
+└────────┬────────────────┘
+         │
+         ▼
+┌─────────────────────────┐
+│  Append to Dataset      │
+│  Update Progress        │
+└─────────────────────────┘
+```
+
+### Agents
+
+**research-paper-agent-simple**
+- Finds GitHub URLs in papers
+- Scores multi-agent relevance (0-10)
+- Provides brief summaries
+
+**developer-agent-simple**
+- Validates GitHub repositories
+- Checks accessibility
+- Generates codebase summaries
+
+### Output
+
+Results are saved to `.claude/analysis/dataset.md`:
+
+| Paper Title | ArXiv URL | GitHub URL | Valid | Codebase Summary | Relevance |
+|-------------|-----------|------------|-------|------------------|-----------|
+| Paper 1 | arxiv.org/... | github.com/... | ✓ | Python multi-agent... | 8.5 |
+
+### Resume on Interruption
+
+The workflow automatically saves progress. To resume:
+```bash
+python .claude/run_analysis.py
+# Will skip already processed papers
+```
+
+### Configuration
+
+Edit `.claude/run_analysis.py` to adjust:
+- `batch_size`: Papers per batch (default: 10)
+- `max_papers`: Limit for testing (default: None for all)
+
+### Monitoring Progress
+
+Check current status:
+```bash
+cat .claude/analysis/progress.json
+```
+
+View results so far:
+```bash
+cat .claude/analysis/dataset.md
+```
 
 ---
 
